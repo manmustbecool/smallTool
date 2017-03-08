@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package tool.model;
+package tool.function;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -11,10 +11,10 @@ import java.util.LinkedHashSet;
 import java.util.LinkedList;
 
 /**
- *
- * @author mingxue
+ * find all value combinations based on a given set of key
+ * 
  */
-public class MoreFun {
+public class ValueCombinationFinder {
 
     ArrayList<ArrayList<Integer>> inputList;
     HashSet<HashSet> outputList; // only will be used for without duplicate
@@ -22,7 +22,7 @@ public class MoreFun {
     
     public static final boolean debug = false;
 
-    public MoreFun(ArrayList<ArrayList<Integer>> al) {
+    public ValueCombinationFinder(ArrayList<ArrayList<Integer>> al) {
         this.inputList = al;
         this.outputList = new HashSet<>();
         this.outputListString = new ArrayList<>();
@@ -37,7 +37,7 @@ public class MoreFun {
 
     }
 
-    public void calculateWOutDuplicate(int index, HashSet<Integer> s) {
+    private void calculateWOutDuplicate(int index, HashSet<Integer> s) {
         for (Integer a : inputList.get(index)) {
             if (!s.contains(a)) {
                 HashSet<Integer> temp = new LinkedHashSet<>(s);
@@ -56,7 +56,7 @@ public class MoreFun {
         }
     }
 
-    public void calculateWduplicate(int index, LinkedList<Integer> s) {
+    private void calculateWduplicate(int index, LinkedList<Integer> s) {
         for (Integer a : inputList.get(index)) {
             LinkedList<Integer> temp = new LinkedList<>(s);
             temp.add(a);

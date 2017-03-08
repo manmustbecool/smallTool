@@ -9,9 +9,9 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
-import tool.model.Fun;
-import static tool.model.Fun.*;
-import tool.model.Fun_2;
+import tool.function.KeyCombinationFinder;
+import static tool.function.KeyCombinationFinder.*;
+import tool.function.Fun_2;
 
 /**
  *
@@ -26,12 +26,11 @@ public class JavaApplication1 {
     }
 
     public static void main(String[] args) {
-        System.out.println(" FUN  ");
+        System.out.println(" KeyCombinationFinder  ");
         test2();
     }
-    
-    
-     public static void test2() {    
+
+    public static void test2() {
         Integer[] data = new Integer[3];
         data[0] = 3;
         data[1] = 2;
@@ -40,7 +39,7 @@ public class JavaApplication1 {
 
     }
 
-    public static void test1() {    
+    public static void test1() {
         Integer[] data = new Integer[6];
         data[0] = 6;
         data[1] = 3;
@@ -51,8 +50,8 @@ public class JavaApplication1 {
         runTest(data);
 
     }
-        
-    public static void runTest(Integer[] data){  
+
+    public static void runTest(Integer[] data) {
         System.out.println("test data: " + Arrays.toString(data));
         long startTime = System.currentTimeMillis();
 
@@ -61,10 +60,10 @@ public class JavaApplication1 {
             int sum = 5;
             int size = 2;
             int duplicate = 2;
-            Fun fun = new Fun(data, sum, size, duplicate);
-            fun.startCalculate(sum);
-//Fun_2 fun = new Fun_2(data,sum);
-//            fun.startCalculate(sum, num);
+            KeyCombinationFinder kcfinder = new KeyCombinationFinder(data, sum, size, duplicate);
+            kcfinder.startCalculate(sum);
+//Fun_2 kcfinder = new Fun_2(data,sum);
+//            kcfinder.startCalculate(sum, num);
         }
 
         long stopTime = System.currentTimeMillis();

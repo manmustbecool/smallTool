@@ -6,7 +6,7 @@
 package testing;
 
 import java.util.ArrayList;
-import tool.model.MoreFun;
+import tool.function.ValueCombinationFinder;
 
 /**
  *
@@ -38,7 +38,7 @@ public class MoreFunTest {
         al.add(a2);
 
         
-        MoreFun moreFun = new MoreFun(al);
+        ValueCombinationFinder moreFun = new ValueCombinationFinder(al);
         moreFun.startCalculate(true);
         moreFun.startCalculate(false);
     }

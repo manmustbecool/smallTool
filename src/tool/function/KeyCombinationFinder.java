@@ -1,4 +1,4 @@
-package tool.model;
+package tool.function;
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -11,11 +11,10 @@ import java.util.List;
 
 /**
  *
- * find all combinations which give a final value (sum)
- *
+ * find all Key combinations which give a final value (sum)
  *
  */
-public class Fun {
+public class KeyCombinationFinder {
 
     private LinkedList<LinkedList<Integer>> outputList = new LinkedList();
     private LinkedList<String> outputListString = new LinkedList();
@@ -30,7 +29,7 @@ public class Fun {
     public static final boolean debug = false;
 
     
-    public Fun(Integer[] data, int sum, int keySize, int maxDuplicate) {
+    public KeyCombinationFinder(Integer[] data, int sum, int keySize, int maxDuplicate) {
 
         // remove values greater than the sum
         List<Integer> temp = new LinkedList();
@@ -61,7 +60,7 @@ public class Fun {
         System.out.println("finalResult.size(): " + outputList.size());
     }
 
-    public void calculate(int sum, LinkedList<Integer> result, int index, int currentSize, int duplicate) {
+    private void calculate(int sum, LinkedList<Integer> result, int index, int currentSize, int duplicate) {
         if (debug) {
             System.out.println("sum : " + sum + "  reslut : " + result.toString()
                     + " index : " + index + " currentSize : " + currentSize + " duplicate : " + duplicate);

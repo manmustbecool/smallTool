@@ -10,7 +10,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
-import tool.model.Fun;
+import tool.function.KeyCombinationFinder;
 import tool.model.RecordOutput1;
 import tool.model.RecordInput1;
 import java.net.URL;
@@ -47,7 +47,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
-import tool.model.MoreFun;
+import tool.function.ValueCombinationFinder;
 import tool.model.RecordInput2;
 
 /**
@@ -215,7 +215,7 @@ public class FXMLDocumentController implements Initializable {
         int total = 0;
         
         for (int sum = sumMin; sum <= sumMax; sum++) {
-            Fun fun = new Fun(data, sum, size, maxDuplidateKey);
+            KeyCombinationFinder fun = new KeyCombinationFinder(data, sum, size, maxDuplidateKey);
             fun.startCalculate(sum);
 
             LinkedList<LinkedList<Integer>> outputList = fun.getOutputList();
@@ -276,7 +276,7 @@ public class FXMLDocumentController implements Initializable {
                 inputList.add(input2Hm.get(t));
             }
 
-            MoreFun moreFun = new MoreFun(inputList);
+            ValueCombinationFinder moreFun = new ValueCombinationFinder(inputList);
             moreFun.startCalculate(duplicate);
             ArrayList<String> res = moreFun.getResList();
             for (String s : res) {
