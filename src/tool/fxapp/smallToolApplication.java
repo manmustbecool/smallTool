@@ -6,7 +6,6 @@
 package tool.fxapp;
 
 import javafx.application.Application;
-import javafx.beans.property.SimpleDoubleProperty;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -16,17 +15,15 @@ import javafx.stage.Stage;
  *
  * @author emiewag
  */
-public class JavaFXApplication2 extends Application {
+public class smallToolApplication extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
         
         stage.setTitle("SmallTool v0.3.");
-        
+     
         Parent root = FXMLLoader.load(getClass().getResource("FXMLDocument.fxml"));
-  
         Scene scene = new Scene(root);
-
         stage.setScene(scene);
         stage.show();
         

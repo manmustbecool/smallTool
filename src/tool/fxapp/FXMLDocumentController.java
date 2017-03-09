@@ -94,14 +94,8 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     private CheckBox checkBox_duplicate;
 
-    @FXML
-    private Button calculate2;
-
-    @FXML
-    private Button button_exportToCSV;
-
     private ObservableList<RecordInput2> tableViewResult2Data;
-
+    
     /**
      * add button
      */
@@ -239,7 +233,7 @@ public class FXMLDocumentController implements Initializable {
     }
 
     @FXML
-    public void caculate2Button(ActionEvent e) {
+    public void button_CFinderCaculate2(ActionEvent e) {
 
         ObservableList<RecordInput2> input2 = tableViewInput2.getItems();
         HashMap<String, ArrayList<Integer>> input2Hm = new HashMap<>();
@@ -293,12 +287,12 @@ public class FXMLDocumentController implements Initializable {
     }
 
     @FXML
-    public void button_exportToCSV(ActionEvent e) throws IOException {
-        System.out.println("button_exportToCSV");
+    public void button_CfinderExportToCSV(ActionEvent e) throws IOException {
+        System.out.println("button_CfinderExportToCSV");
         // ask the user where to save the excel to
         FileChooser fileChooser = new FileChooser();
         fileChooser.setInitialDirectory(File.listRoots()[0]);
-        fileChooser.setTitle("Export result to CSV file");
+        fileChooser.setTitle("Export results to CSV file");
         String fileFormat = "csv";
         fileChooser.setSelectedExtensionFilter(new ExtensionFilter(fileFormat + " files", "*." + fileFormat));
         fileChooser.setInitialFileName("smallTool_result." + fileFormat);
@@ -321,6 +315,23 @@ public class FXMLDocumentController implements Initializable {
             }
         }
     }
+    
+        @FXML
+    public void button_CComparatorImportCSV(ActionEvent e) throws IOException {
+        System.out.println("button_CComparatorImportCSV");
+        // ask the user where to import csv file
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setInitialDirectory(File.listRoots()[0]);
+        fileChooser.setTitle("Import CSV file");
+        String fileFormat = "csv";
+        fileChooser.setSelectedExtensionFilter(new ExtensionFilter(fileFormat + " files", "*." + fileFormat));
+        File file = fileChooser.showSaveDialog(tableViewResult2.getScene().getWindow());
+        
+        if (file != null) {
+           System.out.print(file.getAbsolutePath());
+        }
+    }
+
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
