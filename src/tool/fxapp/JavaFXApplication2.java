@@ -21,7 +21,7 @@ public class JavaFXApplication2 extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         
-        stage.setTitle("SmallTool v0.2.   manmustbecool@gmail.com");
+        stage.setTitle("SmallTool v0.3.");
         
         Parent root = FXMLLoader.load(getClass().getResource("FXMLDocument.fxml"));
   
