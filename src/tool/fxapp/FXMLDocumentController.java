@@ -5,15 +5,18 @@
  */
 package tool.fxapp;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.Writer;
+import java.net.URL;
 import tool.function.KeyCombinationFinder;
 import tool.model.RecordOutput1;
 import tool.model.RecordInput1;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -21,8 +24,11 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -48,6 +54,7 @@ import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.util.Callback;
 import javafx.util.StringConverter;
 import tool.function.ValueCombinationFinder;
+import tool.model.RecordComparator;
 import tool.model.RecordInput2;
 
 /**
@@ -95,7 +102,17 @@ public class FXMLDocumentController implements Initializable {
     private CheckBox checkBox_duplicate;
 
     private ObservableList<RecordInput2> tableViewResult2Data;
-    
+
+    /*
+    * set focus on row 
+     */
+    private void setFocus(int rowIndex, TableView tableView) {
+        System.out.println("rowIndex :" + rowIndex);
+        tableView.requestFocus();
+        tableView.getSelectionModel().select(rowIndex);
+        tableView.getFocusModel().focus(rowIndex);
+    }
+
     /**
      * add button
      */
@@ -104,17 +121,13 @@ public class FXMLDocumentController implements Initializable {
 
         ObservableList<RecordInput1> data = tableViewInput1.getItems();
 
+        // from A 
         char c = Character.toChars(data.size() + 65)[0];
         String k = Character.toString(c);
         Integer v = data.size();
         data.add(new RecordInput1(k, v));
 
-        int ix = data.size() - 1;
-        System.out.println("ix :" + ix);
-        tableViewInput1.requestFocus();
-        tableViewInput1.getSelectionModel().select(ix);
-        tableViewInput1.getFocusModel().focus(ix);
-
+        setFocus(data.size() - 1, tableViewInput1);
     }
 
     /**
@@ -130,15 +143,13 @@ public class FXMLDocumentController implements Initializable {
         String s = Character.getNumericValue(c) + "," + (Character.getNumericValue(c) + 100);
         data.add(new RecordInput2(k, s));
 
-        int ix = data.size() - 1;
-        System.out.println("ix :" + ix);
-        tableViewInput2.requestFocus();
-        tableViewInput2.getSelectionModel().select(ix);
-        tableViewInput2.getFocusModel().focus(ix);
+        setFocus(data.size() - 1, tableViewInput2);
     }
 
     /**
      * delete button
+     *
+     * @param e
      */
     @FXML
     public void deleteKvRecordButton(ActionEvent e) {
@@ -151,10 +162,7 @@ public class FXMLDocumentController implements Initializable {
         if (ix != 0) {
             ix = ix - 1;
         }
-        System.out.println("ix :" + ix);
-        tableViewInput1.requestFocus();
-        tableViewInput1.getSelectionModel().select(ix);
-        tableViewInput1.getFocusModel().focus(ix);
+        setFocus(ix, tableViewInput1);
     }
 
     /**
@@ -171,10 +179,7 @@ public class FXMLDocumentController implements Initializable {
         if (ix != 0) {
             ix = ix - 1;
         }
-        System.out.println("ix :" + ix);
-        tableViewInput2.requestFocus();
-        tableViewInput2.getSelectionModel().select(ix);
-        tableViewInput2.getFocusModel().focus(ix);
+        setFocus(ix, tableViewInput2);
     }
 
     @FXML
@@ -204,17 +209,17 @@ public class FXMLDocumentController implements Initializable {
         int maxDuplidateKey = Integer.parseInt(txt_maxDuplidateKey.getText());
 
         List<RecordOutput1> displayResult = new LinkedList<>();
-        
+
         int index = 0;
         int total = 0;
-        
+
         for (int sum = sumMin; sum <= sumMax; sum++) {
             KeyCombinationFinder fun = new KeyCombinationFinder(data, sum, size, maxDuplidateKey);
             fun.startCalculate(sum);
 
             LinkedList<LinkedList<Integer>> outputList = fun.getOutputList();
             total = total + outputList.size();
-                    
+
             if (index <= 2500) {
                 index = index + 1;
                 for (LinkedList<Integer> outputValues : outputList) {
@@ -286,17 +291,24 @@ public class FXMLDocumentController implements Initializable {
 
     }
 
+    private FileChooser getFileChooser(String title) {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setInitialDirectory(File.listRoots()[0]);
+        fileChooser.setTitle(title);
+        // Set extension filter
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Comma Delimited (*.csv)", "*.csv"));
+        return (fileChooser);
+    }
+
     @FXML
     public void button_CfinderExportToCSV(ActionEvent e) throws IOException {
         System.out.println("button_CfinderExportToCSV");
+
         // ask the user where to save the excel to
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setInitialDirectory(File.listRoots()[0]);
-        fileChooser.setTitle("Export results to CSV file");
-        String fileFormat = "csv";
-        fileChooser.setSelectedExtensionFilter(new ExtensionFilter(fileFormat + " files", "*." + fileFormat));
-        fileChooser.setInitialFileName("smallTool_result." + fileFormat);
+        FileChooser fileChooser = getFileChooser("Export results to CSV file");
+        fileChooser.setInitialFileName("smallTool_result.csv");
         File file = fileChooser.showSaveDialog(tableViewResult2.getScene().getWindow());
+
         if (file != null) {
             Writer writer = null;
             try {
@@ -315,23 +327,170 @@ public class FXMLDocumentController implements Initializable {
             }
         }
     }
-    
-        @FXML
-    public void button_CComparatorImportCSV(ActionEvent e) throws IOException {
-        System.out.println("button_CComparatorImportCSV");
-        // ask the user where to import csv file
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setInitialDirectory(File.listRoots()[0]);
-        fileChooser.setTitle("Import CSV file");
-        String fileFormat = "csv";
-        fileChooser.setSelectedExtensionFilter(new ExtensionFilter(fileFormat + " files", "*." + fileFormat));
-        File file = fileChooser.showSaveDialog(tableViewResult2.getScene().getWindow());
-        
+
+    @FXML
+    public void button_CComparator_exportCSV(ActionEvent e) throws IOException {
+        System.out.println("button_CComparator_exportCSV");
+
+        // ask the user where to save the excel to
+        FileChooser fileChooser = getFileChooser("Export results to CSV file");
+        fileChooser.setInitialFileName("smallTool_result.csv");
+        File file = fileChooser.showSaveDialog(table_CComparator1.getScene().getWindow());
+
         if (file != null) {
-           System.out.print(file.getAbsolutePath());
+            Writer writer = null;
+            try {
+                writer = new BufferedWriter(new FileWriter(file));
+                for (RecordComparator row : table_CComparator1.getItems()) {
+                    if (row.getFieldMatch()) {
+                        String text = row.getFieldCsv();
+                        // remove [ ]
+                        text = text + "\n";
+                        writer.write(text);
+                    }
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            } finally {
+                writer.flush();
+                writer.close();
+            }
         }
     }
 
+    @FXML
+    private TableView<RecordComparator> table_CComparator1;
+
+    @FXML
+    public void button_CComparator_importCSV1(ActionEvent e) throws IOException {
+        System.out.println("button_CComparator_importCSV1");
+
+        ObservableList<RecordComparator> dataList = table_CComparator1.getItems();
+        dataList.clear();
+
+        // ask the user where to import csv file
+        FileChooser fileChooser = getFileChooser("Import CSV 1 for comparator");
+        File file = fileChooser.showOpenDialog(table_CComparator1.getScene().getWindow());
+
+        if (file != null) {
+            System.out.print("import CSV file path: " + file.getAbsolutePath());
+            BufferedReader br = new BufferedReader(new FileReader(file));
+            String line;
+            while ((line = br.readLine()) != null) {
+                dataList.add(new RecordComparator(line, false));
+            }
+            br.close();
+        }
+    }
+
+    @FXML
+    private TableView<RecordComparator> table_CComparator2;
+
+    @FXML
+    public void button_CComparator_importCSV2(ActionEvent e) throws IOException {
+
+        System.out.println("button_CComparator_importCSV2");
+
+        ObservableList<RecordComparator> dataList = table_CComparator2.getItems();
+        dataList.clear();
+
+        // ask the user where to import csv file
+        FileChooser fileChooser = getFileChooser("Import CSV 2 for comparator");
+        File file = fileChooser.showOpenDialog(table_CComparator2.getScene().getWindow());
+
+        if (file != null) {
+            System.out.print("import CSV file path: " + file.getAbsolutePath());
+            BufferedReader br = new BufferedReader(new FileReader(file));
+            String line;
+            while ((line = br.readLine()) != null) {
+                dataList.add(new RecordComparator(line, false));
+            }
+            br.close();
+        }
+    }
+
+    @FXML
+    private TextField txt_numberOfMatch;
+
+    @FXML
+    public void button_CComparator_loadTest(ActionEvent e) {
+
+        ObservableList<RecordComparator> dataList1 = table_CComparator1.getItems();
+        dataList1.clear();
+
+        ObservableList<RecordComparator> dataList2 = table_CComparator2.getItems();
+        dataList2.clear();
+
+        try {
+
+            // file needs to be accessed as inputstream for internal resoruce in jar
+            InputStreamReader inr = new InputStreamReader(getClass().getClassLoader().getResourceAsStream("resources/smallTool_csv1.csv"));
+            BufferedReader br = new BufferedReader(inr);
+            String line;
+            while ((line = br.readLine()) != null) {
+                dataList1.add(new RecordComparator(line, false));
+            }
+            br.close();
+            inr.close();
+
+            // file needs to be accessed as inputstream for internal resoruce in jar
+            InputStreamReader inr2 = new InputStreamReader(getClass().getClassLoader().getResourceAsStream("resources/smallTool_csv2.csv"));
+            BufferedReader br2 = new BufferedReader(inr2);
+            while ((line = br2.readLine()) != null) {
+                dataList2.add(new RecordComparator(line, false));
+            }
+            br2.close();
+
+            inr2.close();
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+
+    }
+
+    @FXML
+    public void button_CComparator_caculate(ActionEvent e) {
+
+        ObservableList<RecordComparator> olData2 = table_CComparator2.getItems();
+        ArrayList<List<String>> data2 = new ArrayList<List<String>>();
+        for (RecordComparator data : olData2) {
+            List<String> elements = Arrays.asList(data.getFieldCsv().split("\\s*,\\s*"));
+            data2.add(elements);
+        }
+
+        int numberOfMatch = Integer.parseInt(txt_numberOfMatch.getText());
+
+        List<RecordComparator> newData1 = new ArrayList<RecordComparator>();
+
+        ObservableList<RecordComparator> olData1 = table_CComparator1.getItems();
+        // for each row of the table
+        for (RecordComparator data : olData1) {
+
+            List<String> elements = Arrays.asList(data.getFieldCsv().split("\\s*,\\s*"));
+
+            RecordComparator temp = new RecordComparator(data.getFieldCsv(), false);
+
+            for (List<String> ll : data2) {
+                // compare each element in the row
+                int m = 0;
+                for (String el : elements) {
+                    if (ll.contains(el)) {
+                        m = m + 1;
+                    }
+                }
+                System.out.println("match: " + m);
+                if (m == numberOfMatch) {
+                    temp.setFieldMatch(true);
+                }
+            }
+            newData1.add(temp);
+
+        }
+
+        ObservableList<RecordComparator> displayResult = FXCollections.observableArrayList(newData1);
+        table_CComparator1.setItems(displayResult);
+    }
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -391,11 +550,11 @@ public class FXMLDocumentController implements Initializable {
                 System.out.println(filterList.toString());
 
                 tableViewResult2.setItems(tableViewResult2Data);
-                ObservableList<RecordInput2> data2 = tableViewResult2.getItems(); 
+                ObservableList<RecordInput2> data2 = tableViewResult2.getItems();
 
                 ObservableList<RecordInput2> tableItems = FXCollections.observableArrayList();
                 ObservableList<TableColumn<RecordInput2, ?>> cols = tableViewResult2.getColumns();
-                
+
                 for (int i = 0; i < data2.size(); i++) {
                     // only search second column
                     for (int j = 1; j < cols.size(); j++) {
@@ -408,7 +567,7 @@ public class FXMLDocumentController implements Initializable {
                         for (String s : cellValueArray) {
                             cellValueList.add(Integer.parseInt(s));
                         };
-                        
+
                         System.out.println(cellValueList.toString());
                         // only work for integer array
                         if (cellValueList.containsAll(filterList)) {
@@ -441,8 +600,8 @@ public class FXMLDocumentController implements Initializable {
 //                }
 //                System.out.println(data.size());
 //
-//                ObservableList<RecordInput2> data2 = tableViewResult2.getItems();
-//                data2.clear();
+//                ObservableList<RecordInput2> dataList = tableViewResult2.getItems();
+//                dataList.clear();
 //
 //            }
 //        });
