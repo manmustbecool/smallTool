@@ -19,7 +19,10 @@ import tool.model.RecordOutput1;
 import tool.model.RecordInput1;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ResourceBundle;
@@ -62,6 +65,8 @@ import tool.model.RecordInput2;
  * @author emiewag
  */
 public class FXMLDocumentController implements Initializable {
+
+    public static final boolean debug = false;
 
     @FXML
     private Label result1Label;
@@ -373,7 +378,7 @@ public class FXMLDocumentController implements Initializable {
         File file = fileChooser.showOpenDialog(table_CComparator1.getScene().getWindow());
 
         if (file != null) {
-            System.out.print("import CSV file path: " + file.getAbsolutePath());
+            System.out.println("import CSV file path: " + file.getAbsolutePath());
             BufferedReader br = new BufferedReader(new FileReader(file));
             String line;
             while ((line = br.readLine()) != null) {
@@ -399,7 +404,7 @@ public class FXMLDocumentController implements Initializable {
         File file = fileChooser.showOpenDialog(table_CComparator2.getScene().getWindow());
 
         if (file != null) {
-            System.out.print("import CSV file path: " + file.getAbsolutePath());
+            System.out.println("import CSV file path: " + file.getAbsolutePath());
             BufferedReader br = new BufferedReader(new FileReader(file));
             String line;
             while ((line = br.readLine()) != null) {
@@ -452,44 +457,97 @@ public class FXMLDocumentController implements Initializable {
     @FXML
     public void button_CComparator_caculate(ActionEvent e) {
 
+        // get csv data 2
         ObservableList<RecordComparator> olData2 = table_CComparator2.getItems();
-        ArrayList<List<String>> data2 = new ArrayList<List<String>>();
+        List<int[]> data2 = new LinkedList<>();
         for (RecordComparator data : olData2) {
-            List<String> elements = Arrays.asList(data.getFieldCsv().split("\\s*,\\s*"));
-            data2.add(elements);
+            String[] strs = data.getFieldCsv().split("\\s*,\\s*");
+            int[] ints = new int[strs.length];
+            int i = 0;
+            for (String s : strs) {
+                ints[i++] = Integer.parseInt(s);
+            }
+            Arrays.sort(ints);
+
+            data2.add(ints);
         }
+
+        System.out.println("Finished load data2");
 
         int numberOfMatch = Integer.parseInt(txt_numberOfMatch.getText());
 
-        List<RecordComparator> newData1 = new ArrayList<RecordComparator>();
-
         ObservableList<RecordComparator> olData1 = table_CComparator1.getItems();
-        // for each row of the table
+        // for each row of the left table
+
+        // List<RecordComparator> x = olData1.subList(0, 10);
         for (RecordComparator data : olData1) {
 
-            List<String> elements = Arrays.asList(data.getFieldCsv().split("\\s*,\\s*"));
+            data.setFieldMatch(false);
 
-            RecordComparator temp = new RecordComparator(data.getFieldCsv(), false);
-
-            for (List<String> ll : data2) {
-                // compare each element in the row
-                int m = 0;
-                for (String el : elements) {
-                    if (ll.contains(el)) {
-                        m = m + 1;
-                    }
-                }
-                System.out.println("match: " + m);
-                if (m == numberOfMatch) {
-                    temp.setFieldMatch(true);
-                }
+            //System.out.println("-----row of data 1");
+            String[] strs = data.getFieldCsv().split("\\s*,\\s*");
+            int[] rowOfData1 = new int[strs.length];
+            int i = 0;
+            for (String s : strs) {
+                rowOfData1[i++] = Integer.parseInt(s);
             }
-            newData1.add(temp);
+            Arrays.sort(rowOfData1);
+
+            //data2 = data2.subList(0, 10);
+            // for each row on the right
+            for (int[] rowOfData2 : data2) {
+
+                //System.out.println("-----row of data 2");
+                int m = 0;
+
+                // compare each element of row1 with data2
+                for (int int1 : rowOfData1) {
+
+                    for (int int2 : rowOfData2) {
+
+                        // System.out.println("int1: " + int1 + " vs int2: " + int2);
+                        if (int1 < int2) {
+                            // go to next element of row 1
+                            break;
+                        }
+
+                        if (int1 == int2) {
+
+                            m = m + 1;
+
+                            if (debug) {
+                                System.out.println("match: " + m);
+                            }
+                            if (m == numberOfMatch) {
+                                data.setFieldMatch(true);
+                            }
+                            // go to next element of row 1
+                            break;
+                        }
+
+                    }
+
+                    if (data.getFieldMatch()) {
+                        break;
+                    }
+
+                }
+
+                if (data.getFieldMatch()) {
+                    break;
+                }
+
+            }
 
         }
 
-        ObservableList<RecordComparator> displayResult = FXCollections.observableArrayList(newData1);
-        table_CComparator1.setItems(displayResult);
+        // refresh the table view
+        table_CComparator1.getColumns().get(1).setVisible(false);
+        table_CComparator1.getColumns().get(1).setVisible(true);
+
+//        ObservableList<RecordComparator> temp =  FXCollections.observableArrayList(table_CComparator1.getItems());
+//        table_CComparator1.getItems().clear();
+//        table_CComparator1.setItems(temp);
     }
 
     @Override

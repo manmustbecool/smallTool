@@ -137,8 +137,8 @@
                                 <CheckBox fx:id="checkBox_duplicate" layoutX="360.0" layoutY="406.0" mnemonicParsing="false" selected="true" text="Allow Duplicated Values" />
                                 <TextField fx:id="maxFinalValue" layoutX="299.0" layoutY="166.0" prefHeight="25.0" prefWidth="51.0" text="7" />
                                 <Text layoutX="174.0" layoutY="183.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Max Final Value :" />
-                        <Text layoutX="14.0" layoutY="19.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Find Key combinations which have values equal to a specific final value" wrappingWidth="444.904296875" />
-                        <Text layoutX="22.0" layoutY="350.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Find values of selected Key combinations after assigning new values to Keys" />
+                                <Text layoutX="14.0" layoutY="19.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Find Key combinations which have values equal to a specific final value" wrappingWidth="444.904296875" />
+                                <Text layoutX="22.0" layoutY="350.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Find values of selected Key combinations after assigning new values to Keys" />
                             </children>
                         </AnchorPane>
                     </content>
@@ -147,7 +147,54 @@
                     <content>
                         <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
                             <children>
-                                <Button layoutX="34.0" layoutY="36.0" mnemonicParsing="false" text="Button" />
+                                <Button layoutX="52.0" layoutY="598.0" mnemonicParsing="false" onAction="#button_CComparator_importCSV1" text="Import CSV 1" />
+                                <TableView fx:id="table_CComparator1" layoutX="37.0" layoutY="49.0" prefHeight="528.0" prefWidth="449.0">
+                                    <columns>
+                                        <TableColumn fx:id="table_CComparator1_column1" prefWidth="378.0" text="CSV 1">
+                                            <cellValueFactory>
+                                                <PropertyValueFactory property="fieldCsv" />
+                                            </cellValueFactory>
+                                        </TableColumn> 
+                                        <TableColumn fx:id="table_CComparator1_column2" minWidth="0.0" prefWidth="76.0" text="Match">
+                                            <cellValueFactory>
+                                                <PropertyValueFactory property="fieldMatch" />
+                                            </cellValueFactory>
+                                        </TableColumn>
+                                    </columns>
+                                    <items>
+                                        <FXCollections fx:factory="observableArrayList"> 
+                                        </FXCollections>
+                                    </items>
+                                </TableView>
+                             
+                                <Button layoutX="694.0" layoutY="598.0" mnemonicParsing="false" onAction="#button_CComparator_importCSV2" text="Import CSV 2" />
+                                <TableView fx:id="table_CComparator2" layoutX="678.0" layoutY="49.0" prefHeight="528.0" prefWidth="337.0">
+                                    <columns>
+                                        <TableColumn fx:id="table_CComparator2_column1" prefWidth="336.0" text="CSV 2">
+                                            <cellValueFactory>
+                                                <PropertyValueFactory property="fieldCsv" />
+                                            </cellValueFactory>
+                                        </TableColumn> 
+                                        <TableColumn fx:id="table_CComparator2_column2" minWidth="0.0" prefWidth="76.0" text="Match">
+                                            <cellValueFactory>
+                                                <PropertyValueFactory property="fieldMatch" />
+                                            </cellValueFactory>
+                                        </TableColumn>
+                                    </columns>
+                                    <items>
+                                        <FXCollections fx:factory="observableArrayList"> 
+                                        </FXCollections>
+                                    </items>
+                                </TableView>
+                                <Text layoutX="502.0" layoutY="179.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Min number of Matches: " wrappingWidth="140.3984375" />
+                                <Button layoutX="364.0" layoutY="598.0" mnemonicParsing="false" onAction="#button_CComparator_exportCSV" text="Export results (True)" />
+                                <Button layoutX="524.0" layoutY="258.0" mnemonicParsing="false" onAction="#button_CComparator_caculate" prefHeight="32.0" prefWidth="97.0" text="Calculate" textFill="#435ce7">
+                                    <font>
+                                        <Font name="System Bold" size="14.0" />
+                                    </font>
+                                </Button>
+                                <TextField fx:id="txt_numberOfMatch" layoutX="543.0" layoutY="200.0" prefHeight="25.0" prefWidth="47.0" text="2" />
+                        <Button layoutX="523.0" layoutY="49.0" mnemonicParsing="false" onAction="#button_CComparator_loadTest" text="Load test data" />
                             </children>
                         </AnchorPane>
                     </content>
